@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SmsMapper">
+	
+	<select id="listPageHttpJoinRecord" parameterType="Page" resultType="pd">
+		select * from join_record 
+		<where>
+			is_delete != 1
+			<if test="pd.username != null and pd.username != ''">
+				and user_name = #{pd.username}
+			</if>
+		</where>
+	</select>
+	
+	<select id="listAllAPIType" resultType="pd">
+		select * from api_type order by `order` asc
+	</select>
+	
+	<insert id="saveHttpJoinRecord" parameterType="pd">
+		INSERT INTO 
+		join_record 
+			(jr_id,username,api_type,app_key,msg_count,is_encode,msg_head,apply_reason,audit_state,op_time,is_delete) 
+		VALUES 
+			(#{jr_id},#{username},#{api_type},#{app_key},#{msg_count},#{is_encode},#{msg_head},#{apply_reason},1,#{op_time},0)
+	</insert>
+	
+	<update id="updateHttpJoinRecord" parameterType="pd">
+		UPDATE 
+			join_record 
+		SET 
+			is_encode = #{is_encode},
+			msg_head = #{msg_head},
+			apply_reason = #{apply_reason},
+			audit_state = #{audit_state},
+			op_time = #{op_time}
+		WHERE jr_id = #{jr_id}
+	</update>
+	
+	<select id="getHttpJoinRecordById" parameterType="java.lang.String" resultType="pd">
+		SELECT * FROM join_record WHERE jr_id = #{_parameter} ORDER BY op_time DESC
+	</select>
+	
+	<update id="deleteHttpJoinRecordById" parameterType="java.lang.String">
+		UPDATE 
+			join_record 
+		SET 
+			is_delete = 1
+		WHERE jr_id = #{jr_id}
+	</update>
+</mapper>
